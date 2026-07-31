@@ -17,18 +17,14 @@ bot.command('start', async (ctx) => {
   const firstName = ctx.from?.first_name || '';
   const lastName = ctx.from?.last_name || '';
   
-  // Параметр из ссылки (например: t.me/bot?start=TOKEN_ИЛИ_PHONE)
   const startToken = ctx.match || null;
-
-  // 1. Генерируем 6-значный OTP-код
   const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
   try {
-    // 2. Записываем точно в колонки таблицы telegram_login_requests
     const { error } = await supabase.from('telegram_login_requests').upsert(
       {
         chat_id: chatId,
-        code_hash: otpCode, // Поле кода в вашей базе
+        code_hash: otpCode,
         telegram_username: username,
         telegram_first_name: firstName,
         telegram_last_name: lastName,
@@ -43,7 +39,6 @@ bot.command('start', async (ctx) => {
       return;
     }
 
-    // 3. Отправляем код пользователю
     await ctx.reply(
       `🔑 Ваш одноразовый код для входа на сайт:\n\n` +
       `\`${otpCode}\`\n\n` +
@@ -56,9 +51,9 @@ bot.command('start', async (ctx) => {
   }
 });
 
-// Обработка обычных текстовых сообщений
 bot.on('message:text', async (ctx) => {
   await ctx.reply('Чтобы получить код для входа, нажмите /start');
 });
 
-export default webhookCallback(bot, 'std/http');
+// Исправлено: заменено 'std/http' на 'express'
+export default webhookCallback(bot, 'express');
