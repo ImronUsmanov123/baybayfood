@@ -1,0 +1,171 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 20px);
+  --radius-4xl: calc(var(--radius) + 32px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-amber: var(--amber);
+  --color-amber-foreground: var(--amber-foreground);
+  --color-navy: var(--navy);
+  --color-navy-foreground: var(--navy-foreground);
+  --color-tomato: var(--tomato);
+  --color-cream: var(--cream);
+  --color-surface: var(--surface);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-track: var(--track);
+  --color-track-foreground: var(--track-foreground);
+  --color-telegram: var(--telegram);
+  --color-telegram-foreground: var(--telegram-foreground);
+
+
+  --font-display: "Bricolage Grotesque", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-chunky: 0 12px 0 -6px oklch(0.12 0.09 302 / 0.45), 0 24px 40px -12px oklch(0.1 0.08 302 / 0.6);
+  --shadow-card: 0 8px 24px -8px oklch(0.1 0.08 302 / 0.55);
+}
+
+:root {
+  --radius: 1.25rem;
+
+  /* Bay Bay Food — deep purple canvas, vibrant yellow + white */
+  --background: oklch(0.25 0.115 302);
+  --foreground: oklch(0.985 0.005 300);
+  --surface: oklch(0.31 0.115 302);
+  --cream: oklch(0.35 0.105 302);
+
+  --card: oklch(0.31 0.115 302);
+  --card-foreground: oklch(0.985 0.005 300);
+  --popover: oklch(0.31 0.115 302);
+  --popover-foreground: oklch(0.985 0.005 300);
+
+  --primary: oklch(0.87 0.18 96);
+  --primary-foreground: oklch(0.23 0.12 302);
+
+  --secondary: oklch(0.35 0.105 302);
+  --secondary-foreground: oklch(0.985 0.005 300);
+
+  --muted: oklch(0.35 0.105 302);
+  --muted-foreground: oklch(0.8 0.045 300);
+
+  --accent: oklch(0.87 0.18 96);
+  --accent-foreground: oklch(0.23 0.12 302);
+
+  --destructive: oklch(0.65 0.21 25);
+  --destructive-foreground: oklch(0.99 0 0);
+
+  --border: oklch(1 0 0 / 14%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.87 0.18 96);
+
+  --amber: oklch(0.87 0.18 96);
+  --amber-foreground: oklch(0.23 0.12 302);
+  --navy: oklch(0.23 0.12 302);
+  --navy-foreground: oklch(0.985 0.005 300);
+  --tomato: oklch(0.68 0.2 25);
+  --brand: oklch(0.87 0.18 96);
+  --brand-foreground: oklch(0.23 0.12 302);
+  --track: oklch(0.72 0.17 350);
+  --track-foreground: oklch(0.18 0.09 302);
+  --telegram: oklch(0.69 0.16 232);
+  --telegram-foreground: oklch(0.99 0 0);
+}
+
+
+@layer base {
+  * { border-color: var(--color-border); }
+  html, body { background-color: var(--color-background); color: var(--color-foreground); }
+  body { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+  h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; font-weight: 800; }
+}
+
+@layer utilities {
+  .safe-b { padding-bottom: max(env(safe-area-inset-bottom), 1rem); }
+  .scroll-hide::-webkit-scrollbar { display: none; }
+  .scroll-hide { scrollbar-width: none; }
+  .press { transition: transform .15s ease; }
+  .press:active { transform: scale(0.96); }
+  .tap { -webkit-tap-highlight-color: transparent; }
+}
+
+/* ---------------------------------------------------------------------------
+ * Slim purple/gold scrollbars — applied to the page and any scroll container
+ * that hasn't opted out with .scroll-hide.
+ * ------------------------------------------------------------------------ */
+@layer base {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--brand) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: oklch(1 0 0 / 6%);
+    border-radius: 999px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+      180deg,
+      var(--brand) 0%,
+      color-mix(in oklab, var(--brand) 65%, var(--track)) 100%
+    );
+    border-radius: 999px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: var(--brand);
+  }
+
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  /* Native rubber-band feel for the pull-to-refresh gesture. */
+  body {
+    overscroll-behavior-y: contain;
+  }
+}
+
+@layer utilities {
+  .scroll-hide::-webkit-scrollbar { display: none; width: 0; }
+  .scroll-hide { scrollbar-width: none; }
+
+  .scroll-slim {
+    scrollbar-width: thin;
+    scrollbar-color: var(--brand) transparent;
+  }
+}

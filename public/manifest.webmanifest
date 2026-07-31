@@ -1,0 +1,16 @@
+{
+  "name": "Bay Bay Food — Uzbek Delivery",
+  "short_name": "Bay Bay Food",
+  "description": "Fresh fast food delivered across Tashkent. Order in seconds.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#2A1140",
+  "theme_color": "#2A1140",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
