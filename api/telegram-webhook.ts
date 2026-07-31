@@ -16,7 +16,10 @@ bot.command('start', async (ctx) => {
   const username = ctx.from?.username || '';
   const firstName = ctx.from?.first_name || '';
   const lastName = ctx.from?.last_name || '';
-  const startToken = ctx.match || '';
+
+  // Генерируем уникальное значение для полей с UNIQUE-ограничениями в БД, если данные отсутствуют
+  const startToken = ctx.match || `none_${chatId}`;
+  const phoneValue = `none_${chatId}`;
 
   const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -29,7 +32,7 @@ bot.command('start', async (ctx) => {
         telegram_first_name: firstName,
         telegram_last_name: lastName,
         start_token: startToken,
-        phone: '', // Передаем пустую строку, чтобы удовлетворить NOT NULL constraint для phone
+        phone: phoneValue,
       },
       { onConflict: 'chat_id' }
     );
