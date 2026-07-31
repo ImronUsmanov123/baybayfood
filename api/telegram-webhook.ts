@@ -16,7 +16,7 @@ bot.command('start', async (ctx) => {
   const username = ctx.from?.username || '';
   const firstName = ctx.from?.first_name || '';
   const lastName = ctx.from?.last_name || '';
-  const startToken = ctx.match || null;
+  const startToken = ctx.match || '';
 
   const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -29,6 +29,7 @@ bot.command('start', async (ctx) => {
         telegram_first_name: firstName,
         telegram_last_name: lastName,
         start_token: startToken,
+        phone: '', // Передаем пустую строку, чтобы удовлетворить NOT NULL constraint для phone
       },
       { onConflict: 'chat_id' }
     );
@@ -56,11 +57,10 @@ bot.on('message:text', async (ctx) => {
   await ctx.reply('Чтобы получить код для входа, нажмите /start');
 });
 
-// 3. Исправленный Vercel Handler с инициализацией бота
+// 3. Vercel Handler с инициализацией бота
 export default async function handler(req: any, res: any) {
   if (req.method === 'POST') {
     try {
-      // Инициализируем данные бота перед обработкой апдейтов
       if (!bot.isInited()) {
         await bot.init();
       }
