@@ -1,4 +1,4 @@
-import { Bot, webhookCallback } from 'grammy';
+import { Bot } from 'grammy';
 import { createClient } from '@supabase/supabase-js';
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -10,14 +10,14 @@ if (!token) throw new Error('TELEGRAM_BOT_TOKEN is missing');
 const bot = new Bot(token);
 const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
 
-// Обработка команды /start
+// 1. Команда /start
 bot.command('start', async (ctx) => {
   const chatId = ctx.chat.id;
   const username = ctx.from?.username || '';
   const firstName = ctx.from?.first_name || '';
   const lastName = ctx.from?.last_name || '';
-  
   const startToken = ctx.match || null;
+
   const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
   try {
@@ -34,8 +34,8 @@ bot.command('start', async (ctx) => {
     );
 
     if (error) {
-      console.error('Supabase error:', error);
-      await ctx.reply('⚠️ Произошла ошибка базы данных. Попробуйте ещё раз.');
+      console.error('Supabase DB Error:', error);
+      await ctx.reply('⚠️ Ошибка базы данных: ' + error.message);
       return;
     }
 
@@ -45,15 +45,30 @@ bot.command('start', async (ctx) => {
       `_Скопируйте его и введите на странице авторизации._`,
       { parse_mode: 'Markdown' }
     );
-  } catch (err) {
-    console.error('Webhook error:', err);
-    await ctx.reply('⚠️ Не удалось сгенерировать код.');
+  } catch (err: any) {
+    console.error('Execution Error:', err);
+    await ctx.reply('⚠️ Произошла ошибка: ' + err.message);
   }
 });
 
+// 2. Любой другой текст
 bot.on('message:text', async (ctx) => {
   await ctx.reply('Чтобы получить код для входа, нажмите /start');
 });
 
-// Исправлено: заменено 'std/http' на 'express'
-export default webhookCallback(bot, 'express');
+// 3. Прямой обработчик без сбоев адаптера grammy
+export default async function handler(req: any, res: any) {
+  if (req.method === 'POST') {
+    try {
+      // Передаем распарсенное тело запроса от Telegram в grammy
+      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+      await bot.handleUpdate(body);
+      return res.status(200).json({ ok: true });
+    } catch (err: any) {
+      console.error('Bot Handler Error:', err);
+      // Возвращаем 200, чтобы Telegram не переотправлял упавший апдейт бесконечно
+      return res.status(200).json({ ok: false, error: err.message });
+    }
+  }
+  return res.status(200).send('Telegram Webhook is active');
+}
