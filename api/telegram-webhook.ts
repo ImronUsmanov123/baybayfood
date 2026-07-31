@@ -10,7 +10,7 @@ if (!token) throw new Error('TELEGRAM_BOT_TOKEN is missing');
 const bot = new Bot(token);
 const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
 
-// Обработка команды /start
+// 1. Команда /start
 bot.command('start', async (ctx) => {
   const chatId = ctx.chat.id;
   const username = ctx.from?.username || '';
@@ -51,16 +51,23 @@ bot.command('start', async (ctx) => {
   }
 });
 
+// 2. Текстовые сообщения
 bot.on('message:text', async (ctx) => {
   await ctx.reply('Чтобы получить код для входа, нажмите /start');
 });
 
-// Нативный обработчик для Vercel без сторонних адаптеров
+// 3. Исправленный Vercel Handler с инициализацией бота
 export default async function handler(req: any, res: any) {
   if (req.method === 'POST') {
     try {
+      // Инициализируем данные бота перед обработкой апдейтов
+      if (!bot.isInited()) {
+        await bot.init();
+      }
+
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
       await bot.handleUpdate(body);
+
       return res.status(200).json({ ok: true });
     } catch (err: any) {
       console.error('Bot Error:', err);
