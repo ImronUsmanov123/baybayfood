@@ -17,12 +17,13 @@ bot.command('start', async (ctx) => {
   const firstName = ctx.from?.first_name || '';
   const lastName = ctx.from?.last_name || '';
   
-  // Получаем start_token из ссылки (например, t.me/bot?start=TOKEN)
+  // ctx.match содержит startToken, переданный с сайта через deep link (t.me/bot?start=TOKEN)
   const startToken = ctx.match || `direct_${chatId}`;
 
   const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
   try {
+    // Обновляем запись по start_token, если он есть, либо по chat_id
     const { error } = await supabase.from('telegram_login_requests').upsert(
       {
         chat_id: chatId,
@@ -31,7 +32,7 @@ bot.command('start', async (ctx) => {
         telegram_first_name: firstName,
         telegram_last_name: lastName,
         start_token: startToken,
-        phone: `user_${chatId}`, // Чтобы не нарушать NOT NULL
+        phone: `user_${chatId}`,
       },
       { onConflict: 'chat_id' }
     );
