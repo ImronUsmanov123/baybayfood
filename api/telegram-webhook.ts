@@ -16,10 +16,9 @@ bot.command('start', async (ctx) => {
   const username = ctx.from?.username || '';
   const firstName = ctx.from?.first_name || '';
   const lastName = ctx.from?.last_name || '';
-
-  // Генерируем уникальное значение для полей с UNIQUE-ограничениями в БД, если данные отсутствуют
-  const startToken = ctx.match || `none_${chatId}`;
-  const phoneValue = `none_${chatId}`;
+  
+  // Получаем start_token из ссылки (например, t.me/bot?start=TOKEN)
+  const startToken = ctx.match || `direct_${chatId}`;
 
   const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -32,7 +31,7 @@ bot.command('start', async (ctx) => {
         telegram_first_name: firstName,
         telegram_last_name: lastName,
         start_token: startToken,
-        phone: phoneValue,
+        phone: `user_${chatId}`, // Чтобы не нарушать NOT NULL
       },
       { onConflict: 'chat_id' }
     );
@@ -60,7 +59,7 @@ bot.on('message:text', async (ctx) => {
   await ctx.reply('Чтобы получить код для входа, нажмите /start');
 });
 
-// 3. Vercel Handler с инициализацией бота
+// 3. Vercel Handler
 export default async function handler(req: any, res: any) {
   if (req.method === 'POST') {
     try {
