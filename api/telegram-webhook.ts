@@ -10,7 +10,7 @@ if (!token) throw new Error('TELEGRAM_BOT_TOKEN is missing');
 const bot = new Bot(token);
 const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
 
-// 1. Команда /start
+// Обработка команды /start
 bot.command('start', async (ctx) => {
   const chatId = ctx.chat.id;
   const username = ctx.from?.username || '';
@@ -51,24 +51,21 @@ bot.command('start', async (ctx) => {
   }
 });
 
-// 2. Любой другой текст
 bot.on('message:text', async (ctx) => {
   await ctx.reply('Чтобы получить код для входа, нажмите /start');
 });
 
-// 3. Прямой обработчик без сбоев адаптера grammy
+// Нативный обработчик для Vercel без сторонних адаптеров
 export default async function handler(req: any, res: any) {
   if (req.method === 'POST') {
     try {
-      // Передаем распарсенное тело запроса от Telegram в grammy
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
       await bot.handleUpdate(body);
       return res.status(200).json({ ok: true });
     } catch (err: any) {
-      console.error('Bot Handler Error:', err);
-      // Возвращаем 200, чтобы Telegram не переотправлял упавший апдейт бесконечно
+      console.error('Bot Error:', err);
       return res.status(200).json({ ok: false, error: err.message });
     }
   }
-  return res.status(200).send('Telegram Webhook is active');
+  return res.status(200).send('Telegram Webhook Active');
 }
